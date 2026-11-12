@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GridMap.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">A* Pathfinder - JaCoCo evaluation</a> &gt; <a href="index.source.html" class="el_package">com.example.pathfinding</a> &gt; <span class="el_source">GridMap.java</span></div><h1>GridMap.java</h1><pre class="source lang-java linenums">package com.example.pathfinding;
+
+/**
+ * A rectangular grid of walkable and blocked cells.
+ *
+ * &lt;p&gt;Out-of-bounds cells are always treated as blocked by {@link #isBlocked(int, int)},
+ * so callers never need a separate bounds check before asking whether a cell is usable.
+ */
+public final class GridMap {
+
+    private final int width;
+    private final int height;
+    private final boolean[][] blocked; // indexed [y][x]
+
+    /** Creates an all-walkable grid. */
+<span class="fc" id="L16">    public GridMap(int width, int height) {</span>
+<span class="fc bfc" id="L17" title="All 4 branches covered.">        if (width &lt;= 0 || height &lt;= 0) {</span>
+<span class="fc" id="L18">            throw new IllegalArgumentException(</span>
+                    &quot;Grid dimensions must be positive: &quot; + width + &quot;x&quot; + height);
+        }
+<span class="fc" id="L21">        this.width = width;</span>
+<span class="fc" id="L22">        this.height = height;</span>
+<span class="fc" id="L23">        this.blocked = new boolean[height][width];</span>
+<span class="fc" id="L24">    }</span>
+
+    /**
+     * Builds a grid from text rows. '#' is a blocked cell and '.' is a walkable cell.
+     * All rows must have the same length.
+     */
+    public static GridMap parse(String... rows) {
+<span class="fc bfc" id="L31" title="All 4 branches covered.">        if (rows == null || rows.length == 0) {</span>
+<span class="fc" id="L32">            throw new IllegalArgumentException(&quot;At least one row is required&quot;);</span>
+        }
+<span class="fc" id="L34">        int w = rows[0].length();</span>
+<span class="fc" id="L35">        GridMap map = new GridMap(w, rows.length);</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        for (int y = 0; y &lt; rows.length; y++) {</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            if (rows[y].length() != w) {</span>
+<span class="fc" id="L38">                throw new IllegalArgumentException(</span>
+<span class="fc" id="L39">                        &quot;Row &quot; + y + &quot; has length &quot; + rows[y].length() + &quot;, expected &quot; + w);</span>
+            }
+<span class="fc bfc" id="L41" title="All 2 branches covered.">            for (int x = 0; x &lt; w; x++) {</span>
+<span class="fc" id="L42">                char c = rows[y].charAt(x);</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">                if (c == '#') {</span>
+<span class="fc" id="L44">                    map.blocked[y][x] = true;</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">                } else if (c != '.') {</span>
+<span class="fc" id="L46">                    throw new IllegalArgumentException(</span>
+                            &quot;Unknown cell '&quot; + c + &quot;' at &quot; + new Point(x, y));
+                }
+            }
+        }
+<span class="fc" id="L51">        return map;</span>
+    }
+
+    public int width() {
+<span class="fc" id="L55">        return width;</span>
+    }
+
+    public int height() {
+<span class="fc" id="L59">        return height;</span>
+    }
+
+    public boolean inBounds(int x, int y) {
+<span class="fc bfc" id="L63" title="All 8 branches covered.">        return x &gt;= 0 &amp;&amp; x &lt; width &amp;&amp; y &gt;= 0 &amp;&amp; y &lt; height;</span>
+    }
+
+    public boolean inBounds(Point p) {
+<span class="fc" id="L67">        return inBounds(p.x(), p.y());</span>
+    }
+
+    /** Returns true if the cell is blocked or lies outside the grid. */
+    public boolean isBlocked(int x, int y) {
+<span class="fc bfc" id="L72" title="All 4 branches covered.">        return !inBounds(x, y) || blocked[y][x];</span>
+    }
+
+    public boolean isBlocked(Point p) {
+<span class="fc" id="L76">        return isBlocked(p.x(), p.y());</span>
+    }
+
+    /** Marks an in-bounds cell blocked or walkable. */
+    public void setBlocked(int x, int y, boolean value) {
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (!inBounds(x, y)) {</span>
+<span class="fc" id="L82">            throw new IllegalArgumentException(&quot;Cell out of bounds: &quot; + new Point(x, y));</span>
+        }
+<span class="fc" id="L84">        blocked[y][x] = value;</span>
+<span class="fc" id="L85">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>
